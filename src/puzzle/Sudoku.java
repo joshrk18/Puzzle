@@ -6,19 +6,20 @@ package puzzle;
  */
 public class Sudoku 
 {
-
+        // create a 9x9 zero matrix
 	static void matrixINIT(int[][] mat)
 	{
-		for(int i = 0 ; i < 9 ; i++)                    // initialize Matrix
+		for(int i = 0 ; i < 9 ; i++)                    
 			for(int j = 0 ; j < 9 ; j++)
 			{
 				mat[i][j] = 0;
 			}
 	}
 
+        // Print a 9x9 matrix 
 	static void matrixPrint(int[][] mat)
 	{
-		for(int i = 0 ; i < 9 ; i++)                    // Print Matrix
+		for(int i = 0 ; i < 9 ; i++)                    
 			for(int j = 0 ; j < 9 ; j++)
 			{
 				if(j < 8)
@@ -227,41 +228,42 @@ public class Sudoku
 		return true;
 	}
 
-	public static int[][] SudokuSolved(int[][] A)
+	public static int[][] SudokuSolver(int[][] A)
 	{
-		int[][] A1;                                     // create matrix1 to break up solve
+                //create 9 9x9 zero matrixes
+		int[][] A1;                                     
 		A1 = new int[9][9];
 		matrixINIT(A1);
 
-		int[][] A2;                                     // create matrix2 to break up solve
+		int[][] A2;                              
 		A2 = new int[9][9];
 		matrixINIT(A2);
 
-		int[][] A3;                                     // create matrix3 to break up solve
+		int[][] A3;
 		A3 = new int[9][9];
 		matrixINIT(A3);
 
-		int[][] A4;                                     // create matrix4 to break up solve
+		int[][] A4;                           
 		A4 = new int[9][9];
 		matrixINIT(A4); 
 
-		int[][] A5;                                     // create matrix5 to break up solve
+		int[][] A5;                       
 		A5 = new int[9][9];
 		matrixINIT(A5); 
 
-		int[][] A6;                                     // create matrix6 to break up solve
+		int[][] A6;               
 		A6 = new int[9][9];
 		matrixINIT(A6); 
 
-		int[][] A7;                                     // create matrix7 to break up solve
+		int[][] A7;                
 		A7 = new int[9][9];
 		matrixINIT(A7); 
 
-		int[][] A8;                                     // create matrix8 to break up solve
+		int[][] A8;                      
 		A8 = new int[9][9];
 		matrixINIT(A8); 
 
-		int[][] A9;                                     // create matrix9 to break up solve
+		int[][] A9;                          
 		A9 = new int[9][9];
 		matrixINIT(A9); 
 
@@ -315,7 +317,8 @@ public class Sudoku
 
 	public static void main(String[] args)
 	{
-		int[][] A;                                      // create matrix to solve
+                // Create matrix of sudoku puzzle to solve
+		int[][] A;                                    
 		A = new int[9][9];
 		A[0][0]= 8; A[0][1]= 0; A[0][2]= 0; A[0][3]= 0; A[0][4]= 0; A[0][5]= 0; A[0][6]= 0; A[0][7]= 0; A[0][8]= 2;
 		A[1][0]= 0; A[1][1]= 7; A[1][2]= 0; A[1][3]= 0; A[1][4]= 0; A[1][5]= 0; A[1][6]= 1; A[1][7]= 4; A[1][8]= 8;
@@ -327,9 +330,9 @@ public class Sudoku
 		A[7][0]= 5; A[7][1]= 4; A[7][2]= 7; A[7][3]= 0; A[7][4]= 0; A[7][5]= 0; A[7][6]= 0; A[7][7]= 8; A[7][8]= 0;
 		A[8][0]= 2; A[8][1]= 0; A[8][2]= 0; A[8][3]= 0; A[8][4]= 0; A[8][5]= 0; A[8][6]= 0; A[8][7]= 0; A[8][8]= 5;
 
-        matrixPrint(A);
+                matrixPrint(A);
 		System.out.println();
-		SudokuSolved(A);
+		SudokuSolver(A);
 		matrixPrint(A);
 
 
