@@ -1,7 +1,7 @@
 package puzzle;
 
 /**
- * Sudoku solver    v1.0
+ * Sudoku solver    v1.01
  * @author Josh Kertscher
  */
 public class Sudoku 
