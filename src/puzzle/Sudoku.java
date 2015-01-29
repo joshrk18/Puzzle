@@ -2,6 +2,7 @@ package puzzle;
 
 /**
  * Sudoku solver    v1.01
+ * date 1/15/2015
  * @author Josh Kertscher
  */
 public class Sudoku 
@@ -19,15 +20,15 @@ public class Sudoku
         // Print a 9x9 matrix 
 	static void matrixPrint(int[][] mat)
 	{
-		for(int i = 0 ; i < 9 ; i++)                    
-			for(int j = 0 ; j < 9 ; j++)
+		for(int i = 0 ; i < 9 ; i++)                                //row selection                 
+			for(int j = 0 ; j < 9 ; j++)                        //column selection
 			{
 				if(j < 8)
-					System.out.print(mat[i][j] + " ");
+					System.out.print(mat[i][j] + " ");  //print cell ij
 				if(j == 8)
 					System.out.println(mat[i][j] + " ");
 			}
-		System.out.println();                           //blank line
+		System.out.println();                                       //blank line
 	}
 
 	static void matrixSu(int row, int col, int[][] mat, int num)
@@ -147,9 +148,9 @@ public class Sudoku
 			}    
 	}
 
-	static boolean matrixCHECK(int[][] A)
+	static boolean matrixCHECK(int[][] A)       //check if solution is valid 
 	{
-		int sumr = 0;
+		int sumr = 0;                       //initilize variables 
 		int sumd = 0;
 
 		int sum11 = 0;
@@ -164,7 +165,7 @@ public class Sudoku
 		int sum32 = 0;
 		int sum33 = 0;
 
-		for(int i = 0 ; i < 9 ; i++)                    
+		for(int i = 0 ; i < 9 ; i++)        //return false if vertical rows or horizontal rows do not add up to 45                 
 		{
 			for(int k = 0 ; k < 9 ; k++)
 			{
@@ -185,10 +186,10 @@ public class Sudoku
 			sumr = 0;
 			sumd = 0;
 		}     
-
-        for(int i = 0 ; i < 3 ; i++)                    
-            for(int j = 0 ; j < 3 ; j++)
-                sum11 += A[i][j];
+              
+        for(int i = 0 ; i < 3 ; i++)        // 11|12|13    adds each of the 9 blocks              
+            for(int j = 0 ; j < 3 ; j++)    // 21|22|23
+                sum11 += A[i][j];           // 31|32|33
 
         for(int i = 0 ; i < 3 ; i++)                    
             for(int j = 3 ; j < 6 ; j++)
@@ -223,11 +224,66 @@ public class Sudoku
                 sum33 += A[i][j];
 
         if(sum11 != 45 && sum12 != 45 && sum13 != 45 && sum21 != 45 && sum22 != 45 && sum23 != 45 && sum31 != 45 && sum32 != 45 && sum33 != 45)
-            return false;
+            return false;   //return false if one of the 9 blocks do not add up to 45
 
 		return true;
 	}
 
+        static boolean matrixCHECKZero(int[][] A)       //check if multiple solutions exist. Determined by if there is a zero left over
+	{
+		for(int i = 0 ; i < 9 ; i++)        //return false if no zeros exist                 
+		{
+			for(int k = 0 ; k < 9 ; k++)
+			{
+				if(A[i][k]==0) return true;
+			}
+		}
+                return false;
+        }
+        
+        static int[][] CopyMatrix(int[][] A)
+        {
+            int[][] Copy;                       //copy matrix in case guess is wrong and we will be able to recover progress and try another guess              
+            Copy = new int[9][9];
+            for(int i = 0 ; i < 9 ; i++)                         
+            {
+		for(int k = 0 ; k < 9 ; k++)
+		{
+                    Copy[i][k]=A[i][k];
+		}
+            }
+            return Copy;
+        }
+        
+        static int[][] MultipleSolutionSolver(int[][] A)       //Solve MultipleSolutionSolver
+	{
+            int[][] Copy;                       //copy matrix in case guess is wrong and we will be able to recover progress and try another guess              
+            Copy = new int[9][9];
+            Copy = CopyMatrix(A);
+            
+            for(int i = 0 ; i < 9 ; i++)        //find zero or empty cell and make guess.                 
+            {
+		for(int k = 0 ; k < 9 ; k++)
+		{
+                    if(Copy[i][k]==0)           //if cell is zero or empy put one solve check and increment till solution is found
+                    {
+                       for(int j = 1 ; j <= 9 ; j++)
+                       {
+                           Copy[i][k] = j;
+                           SudokuSolver(Copy);        //solve sudoku puzzle
+                           if(matrixCHECK(Copy))
+                           {
+                               System.out.println( (i+1) + " " + (k+1) + " " + j);
+                               return Copy;
+                           }
+                           Copy = CopyMatrix(A);
+                       } 
+                    }
+		}
+            }
+            return Copy;
+        }
+        
 	public static int[][] SudokuSolver(int[][] A)
 	{
                 //create 9 9x9 zero matrixes
@@ -267,7 +323,7 @@ public class Sudoku
 		A9 = new int[9][9];
 		matrixINIT(A9); 
 
-		for(int i = 0; i < 100; i++)
+		for(int i = 0; i < 81; i++)
 		{
 			matrixC(A1,A,1);
 			matrixCalc(A1,A,1); 
@@ -305,21 +361,15 @@ public class Sudoku
 			matrixCalc(A9,A,9);
 			matrixSpot(A1,A2,A3,A4,A5,A6,A7,A8,A,9);
 		}  
-
-		if(matrixCHECK(A))
 			return A;
-		else
-		{
-			System.out.println("error");
-			return A;
-		}
 	}
 
 	public static void main(String[] args)
 	{
                 // Create matrix of sudoku puzzle to solve
+                // zeros are the empty cells of sudoku puzzle
 		int[][] A;                                    
-		A = new int[9][9];
+		A = new int[9][9];  //example sudoku puzzle
 		A[0][0]= 8; A[0][1]= 0; A[0][2]= 0; A[0][3]= 0; A[0][4]= 0; A[0][5]= 0; A[0][6]= 0; A[0][7]= 0; A[0][8]= 2;
 		A[1][0]= 0; A[1][1]= 7; A[1][2]= 0; A[1][3]= 0; A[1][4]= 0; A[1][5]= 0; A[1][6]= 1; A[1][7]= 4; A[1][8]= 8;
 		A[2][0]= 4; A[2][1]= 3; A[2][2]= 2; A[2][3]= 1; A[2][4]= 8; A[2][5]= 5; A[2][6]= 6; A[2][7]= 0; A[2][8]= 0;
@@ -329,14 +379,36 @@ public class Sudoku
 		A[6][0]= 0; A[6][1]= 0; A[6][2]= 9; A[6][3]= 3; A[6][4]= 5; A[6][5]= 1; A[6][6]= 7; A[6][7]= 2; A[6][8]= 4;
 		A[7][0]= 5; A[7][1]= 4; A[7][2]= 7; A[7][3]= 0; A[7][4]= 0; A[7][5]= 0; A[7][6]= 0; A[7][7]= 8; A[7][8]= 0;
 		A[8][0]= 2; A[8][1]= 0; A[8][2]= 0; A[8][3]= 0; A[8][4]= 0; A[8][5]= 0; A[8][6]= 0; A[8][7]= 0; A[8][8]= 5;
-
-                matrixPrint(A);
-		System.out.println();
-		SudokuSolver(A);
-		matrixPrint(A);
-
-
-
+                
+                int[][] B;                                    
+		B = new int[9][9];  //example sudoku puzzle mulitple solutions
+		B[0][0]= 8; B[0][1]= 0; B[0][2]= 0; B[0][3]= 0; B[0][4]= 0; B[0][5]= 0; B[0][6]= 0; B[0][7]= 0; B[0][8]= 2;
+		B[1][0]= 0; B[1][1]= 7; B[1][2]= 0; B[1][3]= 0; B[1][4]= 0; B[1][5]= 0; B[1][6]= 1; B[1][7]= 4; B[1][8]= 8;
+		B[2][0]= 4; B[2][1]= 3; B[2][2]= 2; B[2][3]= 1; B[2][4]= 8; B[2][5]= 5; B[2][6]= 6; B[2][7]= 0; B[2][8]= 0;
+		B[3][0]= 0; B[3][1]= 0; B[3][2]= 0; B[3][3]= 2; B[3][4]= 1; B[3][5]= 8; B[3][6]= 4; B[3][7]= 0; B[3][8]= 0;
+		B[4][0]= 7; B[4][1]= 0; B[4][2]= 0; B[4][3]= 0; B[4][4]= 0; B[4][5]= 0; B[4][6]= 0; B[4][7]= 0; B[4][8]= 6;
+		B[5][0]= 0; B[5][1]= 0; B[5][2]= 0; B[5][3]= 5; B[5][4]= 6; B[5][5]= 7; B[5][6]= 0; B[5][7]= 0; B[5][8]= 0;
+		B[6][0]= 0; B[6][1]= 0; B[6][2]= 9; B[6][3]= 3; B[6][4]= 5; B[6][5]= 1; B[6][6]= 7; B[6][7]= 2; B[6][8]= 4;
+		B[7][0]= 0; B[7][1]= 4; B[7][2]= 7; B[7][3]= 0; B[7][4]= 0; B[7][5]= 0; B[7][6]= 0; B[7][7]= 8; B[7][8]= 0;
+		B[8][0]= 2; B[8][1]= 0; B[8][2]= 0; B[8][3]= 0; B[8][4]= 0; B[8][5]= 0; B[8][6]= 0; B[8][7]= 0; B[8][8]= 0;
+                
+                matrixPrint(B);         //print unsolved sudoku puzzle
+		System.out.println();   //print line
+		SudokuSolver(B);        //solve sudoku puzzle
+                
+                if(matrixCHECKZero(B))
+                { 
+                    System.out.println("Multiple Solutions exist"); 
+                    B=MultipleSolutionSolver(B);
+                    matrixPrint(B);
+                }
+                
+                else if(matrixCHECK(B)){ System.out.println("ERROR"); }
+                else
+                { 
+                    System.out.println("Solution found"); 
+                    matrixPrint(B);         //print solved sudoku puzzle
+                }
 	}
 }
 
