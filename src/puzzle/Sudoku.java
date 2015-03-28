@@ -1,8 +1,15 @@
 package puzzle;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
+
 /**
- * Sudoku solver    v1.01
- * date 1/15/2015
+ * Sudoku solver    v2.01
+ * date 1/28/2015
  * @author Josh Kertscher
  */
 public class Sudoku 
@@ -255,7 +262,7 @@ public class Sudoku
             return Copy;
         }
         
-        static int[][] MultipleSolutionSolver(int[][] A)       //Solve MultipleSolutionSolver
+        static int[][] OneGuessSolutionSolver(int[][] A)       //Solve MultipleSolutionSolver
 	{
             int[][] Copy;                       //copy matrix in case guess is wrong and we will be able to recover progress and try another guess              
             Copy = new int[9][9];
@@ -274,6 +281,7 @@ public class Sudoku
                            if(matrixCHECK(Copy))
                            {
                                System.out.println( (i+1) + " " + (k+1) + " " + j);
+                               matrixPrint(Copy);
                                return Copy;
                            }
                            Copy = CopyMatrix(A);
@@ -282,6 +290,53 @@ public class Sudoku
 		}
             }
             return Copy;
+        }
+        
+        public static boolean SudokuCheck(int[][] A)
+        {
+            //check horizontal for copies
+            for(int i = 0; i < 9; i++ )
+            {
+                for(int j = 0; j < 9; j++)
+                {
+                    for(int k = 0; k < 9; k++)
+                    {
+                        if( (A[i][j]==A[i][k])&(A[i][j]!=0)&(k!=j) )
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            //check vertical for copies
+            for(int i = 0; i < 9; i++ )
+            {
+                for(int j = 0; j < 9; j++)
+                {
+                    for(int k = 0; k < 9; k++)
+                    {
+                        if( (A[i][j]==A[k][j])&(A[i][j]!=0)&(k!=i) )
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            //check squares for copies
+            int[] numbers;
+            numbers = new int[10];
+            for(int i = 0; i < 3; i++ )
+            {
+                for(int j = 0; j < 3; j++)
+                {
+                    if( (A[i][j]!=0) )
+                    {
+                        if(numbers[A[i][j]] == A[i][j]) { return false; }
+                        numbers[A[i][j]] = A[i][j];
+                    }
+                }
+            }
+            return true;
         }
         
 	public static int[][] SudokuSolver(int[][] A)
@@ -382,32 +437,47 @@ public class Sudoku
                 
                 int[][] B;                                    
 		B = new int[9][9];  //example sudoku puzzle mulitple solutions
-		B[0][0]= 8; B[0][1]= 0; B[0][2]= 0; B[0][3]= 0; B[0][4]= 0; B[0][5]= 0; B[0][6]= 0; B[0][7]= 0; B[0][8]= 2;
-		B[1][0]= 0; B[1][1]= 7; B[1][2]= 0; B[1][3]= 0; B[1][4]= 0; B[1][5]= 0; B[1][6]= 1; B[1][7]= 4; B[1][8]= 8;
-		B[2][0]= 4; B[2][1]= 3; B[2][2]= 2; B[2][3]= 1; B[2][4]= 8; B[2][5]= 5; B[2][6]= 6; B[2][7]= 0; B[2][8]= 0;
-		B[3][0]= 0; B[3][1]= 0; B[3][2]= 0; B[3][3]= 2; B[3][4]= 1; B[3][5]= 8; B[3][6]= 4; B[3][7]= 0; B[3][8]= 0;
-		B[4][0]= 7; B[4][1]= 0; B[4][2]= 0; B[4][3]= 0; B[4][4]= 0; B[4][5]= 0; B[4][6]= 0; B[4][7]= 0; B[4][8]= 6;
-		B[5][0]= 0; B[5][1]= 0; B[5][2]= 0; B[5][3]= 5; B[5][4]= 6; B[5][5]= 7; B[5][6]= 0; B[5][7]= 0; B[5][8]= 0;
-		B[6][0]= 0; B[6][1]= 0; B[6][2]= 9; B[6][3]= 3; B[6][4]= 5; B[6][5]= 1; B[6][6]= 7; B[6][7]= 2; B[6][8]= 4;
-		B[7][0]= 0; B[7][1]= 4; B[7][2]= 7; B[7][3]= 0; B[7][4]= 0; B[7][5]= 0; B[7][6]= 0; B[7][7]= 8; B[7][8]= 0;
-		B[8][0]= 2; B[8][1]= 0; B[8][2]= 0; B[8][3]= 0; B[8][4]= 0; B[8][5]= 0; B[8][6]= 0; B[8][7]= 0; B[8][8]= 0;
                 
-                matrixPrint(B);         //print unsolved sudoku puzzle
+                		////////////input file///////////
+		try
+		{
+			Scanner file = new Scanner( new File("SudokuFile.txt"));
+			for(int i = 0; i < 9; i++)
+			{
+                            for(int j = 0; j < 9; j++)
+                            {
+				B[i][j] = file.nextInt();
+                            }
+			}
+			file.close();
+		}
+		
+		catch(FileNotFoundException fnfe)
+		{
+			System.out.println("cannot find file");
+		}
+		
+		catch(IOException ioe)
+		{
+			ioe.printStackTrace();
+		}
+                
+                //////Solve///////
+                matrixPrint(A);         //print unsolved sudoku puzzle
 		System.out.println();   //print line
-		SudokuSolver(B);        //solve sudoku puzzle
+		SudokuSolver(A);        //solve sudoku puzzle
                 
-                if(matrixCHECKZero(B))
+                if(SudokuCheck(A))
                 { 
-                    System.out.println("Multiple Solutions exist"); 
-                    B=MultipleSolutionSolver(B);
-                    matrixPrint(B);
+                    System.out.println("Level 2 Complexity"); 
+                    matrixPrint(OneGuessSolutionSolver(B));
                 }
                 
-                else if(matrixCHECK(B)){ System.out.println("ERROR"); }
+                else if(matrixCHECK(A)){ System.out.println("ERROR"); }
                 else
                 { 
                     System.out.println("Solution found"); 
-                    matrixPrint(B);         //print solved sudoku puzzle
+                    matrixPrint(A);         //print solved sudoku puzzle
                 }
 	}
 }
